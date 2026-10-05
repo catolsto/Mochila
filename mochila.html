@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Organiza tu mochila</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf3e0;--ink:#3b2f2f;--card:#fffdf6;--line:#eadfc4;--ac:#e76f51;--note:#fff3a3;--ni:#3b2f2f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2b2420;--ink:#f1e6d3;--card:#37302a;--line:#3a322b;--ac:#f4a261;--note:#5b5224;--ni:#f6efd9}}
+:root[data-theme="dark"]{--bg:#2b2420;--ink:#f1e6d3;--card:#37302a;--line:#3a322b;--ac:#f4a261;--note:#5b5224;--ni:#f6efd9}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font:19px/1.4 'Patrick Hand','Comic Sans MS',cursive,sans-serif;background-color:var(--bg);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:26px 26px}
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 18px;max-width:1000px;margin:auto}
+h1,h2{font-family:Caveat,'Comic Sans MS',cursive;margin:0;font-size:2rem}
+h2{font-size:1.7rem}
+#pg{flex:1;min-width:120px;height:14px;border:2px solid var(--ink);border-radius:9px;overflow:hidden;background:var(--card)}
+#bar{display:block;height:100%;width:0;background:var(--ac);transition:width .4s}
+#tot{font-weight:bold;font-size:1.2rem}
+main{display:grid;gap:16px;max-width:1000px;margin:auto;padding:0 18px 30px;grid-template-areas:"mi" "bag" "ed"}
+@media(min-width:820px){main:not(.fin){grid-template-columns:1.1fr 1fr;grid-template-areas:"mi bag" "ed bag"}}
+#mi{grid-area:mi}#bag{grid-area:bag}#ed{grid-area:ed}
+.card{background:var(--card);border:2px solid var(--ink);border-radius:16px;padding:16px 18px;box-shadow:4px 5px 0 rgba(0,0,0,.14)}
+.card p{margin:.4em 0}
+code,pre,textarea{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85em}
+code{background:rgba(127,127,127,.18);padding:2px 6px;border-radius:6px}
+.sts{display:flex;flex-wrap:wrap;gap:12px;padding:16px 4px;min-height:110px;align-items:flex-end;background:rgba(231,111,81,.1);border-radius:12px;margin:10px 0}
+.st{--r:0deg;display:flex;flex-direction:column;align-items:center;padding:6px 10px 8px;border-radius:14px;color:#3b2f2f;font-size:.9rem;box-shadow:2px 3px 0 rgba(0,0,0,.18);transform:rotate(var(--r));animation:pop .35s;background:#ffd6e0}
+.st:nth-child(5n+2){background:#d8f3dc}.st:nth-child(5n+3){background:#cde7ff}.st:nth-child(5n+4){background:#fff1b8}.st:nth-child(5n+5){background:#e6d9ff}
+.st b{font-family:ui-monospace,monospace;font-size:.75rem;background:#3b2f2f;color:#fff;border-radius:8px;padding:0 7px}
+.st span{font-size:1.8rem}
+@keyframes pop{from{transform:scale(.3) rotate(10deg);opacity:0}}
+.note{background:var(--note);padding:10px 12px;border-radius:4px 4px 14px 4px;box-shadow:3px 4px 0 rgba(0,0,0,.18);transform:rotate(-.6deg)}
+textarea{width:100%;background:transparent;border:0;outline:0;resize:vertical;color:var(--ni);min-height:84px}
+.bt{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+button{font:inherit;cursor:pointer;border:2px solid var(--ink);border-radius:12px;padding:7px 16px;background:var(--ac);color:#fff;box-shadow:2px 3px 0 rgba(0,0,0,.2)}
+button.s{background:var(--card);color:var(--ink)}
+button:active{transform:translate(2px,3px);box-shadow:none}
+#fb>div{padding:10px 14px;border-radius:12px;margin-bottom:10px}
+.ok{background:#d8f3dc;color:#1b4332}.bad{background:#ffe0d6;color:#6b2a14}.hint{background:#dbeafe;color:#1e3a5f}
+.big{font-family:Caveat,cursive;font-size:3rem;margin:0}
+.cs{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.cs div{border:2px dashed var(--line);border-radius:10px;padding:8px 10px}
+.cs pre{margin:4px 0 0;white-space:pre-wrap}
+#cf{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9}
+#mu{padding:2px 10px}
+</style>
+</head>
+<body>
+<header><h1>🎒 Organiza tu mochila</h1><div id="pg"><i id="bar"></i></div><div id="tot">⭐ 0</div><button id="mu" class="s" title="Sonido">🔊</button></header>
+<canvas id="cf"></canvas>
+<main id="m">
+<section class="card" id="mi"></section>
+<section class="card" id="bag"></section>
+<section id="ed">
+<div class="note"><textarea id="cd" rows="3" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="Escribe tu código Python aquí…"></textarea></div>
+<div class="bt"><button id="go">▶ Ejecutar</button><button id="hb" class="s">💡 Pista</button><button id="rs" class="s">↺ Reiniciar misión</button></div>
+<div id="fb"></div><button id="nx" hidden>Siguiente →</button>
+</section>
+</main>
+<script>
+const M=[
+{k:'len()',q:'Antes de salir de casa, cuenta cuántos objetos llevas en la mochila.',h:'len(lista) te dice cuántos elementos tiene. Usa print(...) para verlo.',s:'len(mochila)',n:/len/,t:1},
+{k:'in',q:'¿Llevas el celular? Averígualo: tu código debe dar True o False.',h:'Prueba con: "celular" in mochila',s:'"celular" in mochila',n:/\bin\b/,t:1},
+{k:'append()',q:'¡Te regalaron unos audífonos! Agrégalos al final de tu mochila.',h:'append() agrega un elemento al final de la lista.',s:'mochila.append("audífonos")',n:/append/},
+{k:'insert()',q:'¡Casi olvidas el celular! Ponlo en la primera posición.',h:'insert(posición, objeto). La primera posición es la 0.',s:'mochila.insert(0, "celular")',n:/insert/},
+{k:'lista[i] = …',q:'Tu cargador (posición 3) se dañó. Cámbialo por otro "lapicero".',h:'Asigna directo a una posición: mochila[3] = ...',s:'mochila[3] = "lapicero"',n:/\]\s*=/},
+{k:'count()',q:'¿Cuántos lapiceros llevas ahora? Muéstralo con código.',h:'lista.count(objeto) cuenta cuántas veces aparece.',s:'mochila.count("lapicero")',n:/count/,t:1},
+{k:'pop()',q:'Los audífonos pesan mucho. Saca el último objeto de la mochila.',h:'pop() saca el último elemento de la lista.',s:'mochila.pop()',n:/pop/},
+{k:'remove()',q:'Sobra un lapicero. Sácalo por su nombre.',h:'remove(objeto) quita la primera coincidencia.',s:'mochila.remove("lapicero")',n:/remove/},
+{k:'del',q:'Hoy no hay clase de ese cuaderno. Elimina el objeto que está en la posición 1.',h:'del lista[posición]',s:'del mochila[1]',n:/\bdel\b/},
+{k:'extend()',q:'Tu amiga te presta su mochila. Agrega todos sus objetos a la tuya.',x:{amiga:['regla','borrador','calculadora']},h:'extend(otra_lista) agrega todos los elementos de otra lista.',s:'mochila.extend(amiga)',n:/extend/},
+{k:'sort()',q:'Ordena tu mochila alfabéticamente.',h:'sort() ordena la lista de menor a mayor.',s:'mochila.sort()',n:/sort/},
+{k:'reverse()',q:'Ahora dale la vuelta: invierte el orden de la mochila.',h:'reverse() invierte el orden de la lista.',s:'mochila.reverse()',n:/reverse/},
+{k:'Combo',q:'¡Misión doble! Agrega "tijeras" al final y luego saca el primer objeto de la mochila.',h:'Usa append() y luego pop(0). Una instrucción por línea.',s:'mochila.append("tijeras"); mochila.pop(0)'},
+{k:'index()',q:'¿En qué posición está la calculadora? Averígualo con código.',h:'lista.index(objeto) devuelve la posición donde está.',s:'mochila.index("calculadora")',n:/index/,t:1},
+{k:'índice negativo',q:'Muestra qué objeto está en la última posición usando un índice negativo.',h:'mochila[-1] es el último elemento.',s:'mochila[-1]',n:/\[\s*-1\s*\]/,t:1},
+{k:'insert() en medio',q:'Te acordaste de la regla. Ponla en la posición 2, sin sacar nada.',h:'insert(2, "regla") la coloca en la posición 2 y corre los demás.',s:'mochila.insert(2, "regla")',n:/insert/},
+{k:'pop(i)',q:'Le prestas el celular a un amigo. Sácalo usando su posición (¡mira el índice en la mochila!).',h:'pop(posición) saca el elemento de esa posición.',s:'mochila.pop(1)',n:/pop/},
+{k:'Combo 2',q:'¡Misión doble! Cambia el borrador por un "cuaderno" y luego ordena la mochila.',h:'Primero mochila[posición] = ..., luego sort().',s:'mochila[3] = "cuaderno"; mochila.sort()'},
+{k:'Combo 3',q:'Tu prima te regala su mochila (prima). Agrégala y muestra cuántos lapiceros tienes ahora.',x:{prima:['lapicero','lapicero']},h:'extend(prima) y luego print(mochila.count("lapicero")).',s:'mochila.extend(prima); print(mochila.count("lapicero"))'},
+{k:'clear()',q:'¡Llegaste a casa! Vacía la mochila por completo.',h:'clear() elimina todos los elementos.',s:'mochila.clear()',n:/clear/}
+];
+const em={cuaderno:'📓',lapicero:'✏️',cargador:'🔌','audífonos':'🎧',celular:'📱',calculadora:'🧮',regla:'📏',borrador:'🧽',tijeras:'✂️'};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const rp=v=>Array.isArray(v)?'['+v.map(rp).join(', ')+']':typeof v=='string'?"'"+v+"'":v===true?'True':v===false?'False':v===null?'None':String(v);
+const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+
+/* Mini intérprete de listas de Python */
+function ev(src,E){
+ const T=[...src.matchAll(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(-?\d+)|([A-Za-zÀ-ÿ_][\wÀ-ÿ]*)|(\S)/g)].map(m=>m[1]?['s',m[1].slice(1,-1)]:m[2]?['n',+m[2]]:m[3]?['i',m[3]]:['p',m[4]]);
+ let p=0;const pk=()=>T[p]||[],pu=v=>pk()[0]==='p'&&pk()[1]===v,er=m=>{throw new Error(m)};
+ const eat=v=>{if(pu(v))p++;else er('SyntaxError: se esperaba '+v)};
+ const args=()=>{const a=[];if(pu(')')){p++;return a}do a.push(ex());while(pu(',')&&++p);eat(')');return a};
+ function call(L,m,a){if(!Array.isArray(L))er('TypeError: eso no es una lista');
+  const f={append:()=>{L.push(a[0]);return null},
+  insert:()=>{L.splice(a[0],0,a[1]);return null},
+  pop:()=>{if(!L.length)er('IndexError: pop from empty list');let i=a.length?a[0]:L.length-1;if(i<0)i+=L.length;if(i<0||i>=L.length)er('IndexError: pop index out of range');return L.splice(i,1)[0]},
+  remove:()=>{const i=L.indexOf(a[0]);if(i<0)er('ValueError: ese objeto no está en la lista');L.splice(i,1);return null},
+  extend:()=>{if(!Array.isArray(a[0]))er('TypeError: extend necesita una lista');L.push(...a[0]);return null},
+  count:()=>L.filter(x=>x===a[0]).length,
+  index:()=>{const i=L.indexOf(a[0]);if(i<0)er('ValueError: ese objeto no está en la lista');return i},
+  sort:()=>{L.sort((x,y)=>x<y?-1:x>y?1:0);return null},
+  reverse:()=>{L.reverse();return null},
+  clear:()=>{L.length=0;return null}}[m];
+  if(!f)er("AttributeError: las listas no tienen '"+m+"'");return f()}
+ const atom=()=>{const[t,v]=pk();p++;
+  if(t==='s'||t==='n')return v;
+  if(t==='i'){if(v==='True')return true;if(v==='False')return false;if(v==='None')return null;
+   if(v==='len'){eat('(');return args()[0].length}
+   if(!(v in E))er("NameError: name '"+v+"' is not defined");return E[v]}
+  if(t==='p'&&v==='['){const a=[];if(pu(']')){p++;return a}do a.push(ex());while(pu(',')&&++p);eat(']');return a}
+  er('SyntaxError: no entiendo "'+(v??'')+'"')};
+ const post=()=>{let o=atom();
+  while(pu('.')||pu('[')){
+   if(pu('[')){p++;let i=ex();eat(']');if(i<0)i+=o.length;if(i<0||i>=o.length)er('IndexError: list index out of range');o=o[i]}
+   else{p++;const m=pk()[1];p++;eat('(');o=call(o,m,args())}}
+  return o};
+ const ex=()=>{const a=post();if(pk()[0]==='i'&&pk()[1]==='in'){p++;return post().includes(a)}return a};
+ const r=ex();if(p<T.length)er('SyntaxError: algo sobra en tu código');return r}
+
+function run(code,L0,x){
+ const E={mochila:[...L0],...JSON.parse(JSON.stringify(x||{}))},out=[];
+ for(const raw of code.split(/\n|;/)){const s=raw.replace(/#.*$/,'').trim();if(!s)continue;let m;
+  if(m=s.match(/^print\((.*)\)$/))out.push(ev(m[1],E));
+  else if(m=s.match(/^del\s+(.+)\[(.+)\]$/)){const L=ev(m[1],E);let i=ev(m[2],E);if(i<0)i+=L.length;if(i<0||i>=L.length)throw new Error('IndexError: list assignment index out of range');L.splice(i,1)}
+  else if(m=s.match(/^([A-Za-zÀ-ÿ_][\wÀ-ÿ]*)\s*(?:\[(.+)\])?\s*=(?!=)\s*(.+)$/)){
+   if(m[2]!==undefined){const L=E[m[1]];if(!Array.isArray(L))throw new Error("NameError: name '"+m[1]+"' is not defined");let i=ev(m[2],E);if(i<0)i+=L.length;if(i<0||i>=L.length)throw new Error('IndexError: list assignment index out of range');L[i]=ev(m[3],E)}
+   else E[m[1]]=ev(m[3],E)}
+  else{const v=ev(s,E);if(v!==null)out.push(v)}}
+ if(!Array.isArray(E.mochila))throw new Error('TypeError: mochila ya no es una lista');
+ return{L:E.mochila,out}}
+
+/* Sonido y confeti */
+let snd=1,AC;
+function tone(f,t0,d,ty,v){const o=AC.createOscillator(),g=AC.createGain(),T=AC.currentTime+t0;o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,T);g.gain.exponentialRampToValueAtTime(.001,T+d);o.connect(g);g.connect(AC.destination);o.start(T);o.stop(T+d)}
+function sfx(ok){if(!snd)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
+ if(ok)[523,659,784,1047].forEach((f,k)=>tone(f,k*.1,.25,'triangle',.25));else{tone(220,0,.2,'sawtooth',.15);tone(165,.18,.3,'sawtooth',.15)}}catch(e){}}
+function confetti(n=140){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const c=$('cf'),x=c.getContext('2d'),cl=['#e76f51','#f4a261','#e9c46a','#2a9d8f','#6c8ef5','#f28ab2'];c.width=innerWidth;c.height=innerHeight;
+ const P=Array.from({length:n},()=>({x:innerWidth/2,y:innerHeight*.35,vx:(Math.random()-.5)*16,vy:-Math.random()*14-4,r:Math.random()*6,vr:Math.random()*.4-.2,w:6+Math.random()*6,h:4+Math.random()*5,c:cl[Math.random()*6|0]}));
+ let f=0;(function a(){x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.vy+=.35;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.w/2,-p.h/2,p.w,p.h);x.restore()});
+ if(++f<150)requestAnimationFrame(a);else x.clearRect(0,0,c.width,c.height)})()}
+
+/* Juego */
+const tpl=$('m').innerHTML,START=['cuaderno','lapicero','cargador'];
+let i=0,cur=[...START],S=[],w=0,hu=0,done=0,exp;
+function draw(L){$('bag').innerHTML='<h2>🎒 Tu mochila</h2><div class="sts">'+(L.length?L.map((x,k)=>`<div class="st" style="--r:${k*7%9-4}deg"><b>${k}</b><span>${em[x]||'📦'}</span>${esc(x)}</div>`).join(''):'<i>(vacía)</i>')+'</div><code>mochila = '+esc(rp(L))+'</code>'}
+function head(){$('tot').textContent='⭐ '+S.reduce((a,b)=>a+b,0);$('bar').style.width=((i+done)/M.length*100)+'%'}
+function load(){const m=M[i];exp=run(m.s,cur,m.x);w=0;hu=0;done=0;
+ $('mi').innerHTML=`<h2>Misión ${i+1} de ${M.length}</h2><p>${m.q}</p>`+(m.x?Object.entries(m.x).map(([k,v])=>'<code>'+k+' = '+rp(v)+'</code>').join(' '):'');
+ draw(cur);$('cd').value='';$('fb').innerHTML='';$('nx').hidden=true;head()}
+const say=(c,h)=>$('fb').innerHTML=`<div class="${c}">${h}</div>`;
+function bad(h){sfx(0);w++;say('bad','🤔 '+h)}
+function check(){if(done)return;const m=M[i],c=$('cd').value;let r;
+ try{r=run(c,cur,m.x)}catch(e){return bad('Python se quejó: <code>'+esc(e.message)+'</code>')}
+ let ok,msg;
+ if(m.t){const o=r.out;ok=o.length&&o[o.length-1]===exp.out[exp.out.length-1]&&same(r.L,exp.L);
+  msg=o.length?'Tu código dio <code>'+esc(rp(o[o.length-1]))+'</code>, pero no es lo que pide la misión.':'Tu código no muestra nada. Escribe la expresión o usa <code>print(...)</code>.'}
+ else{ok=same(r.L,exp.L);msg='Tu mochila quedó así: <code>'+esc(rp(r.L))+'</code>. Revisa la misión y vuelve a intentar.'}
+ if(ok&&m.n&&!m.n.test(c)){ok=0;msg='Tu resultado es correcto, pero esta misión pide usar otro método. ¡Prueba la pista!'}
+ if(!ok)return bad('¡Casi! '+msg);
+ const st=Math.max(1,3-Math.min(hu+w,2));S[i]=st;sfx(1);confetti();cur=r.L;done=1;draw(cur);
+ say('ok','🎉 ¡Muy bien! '+'⭐'.repeat(st)+(m.t?' Resultado: <code>'+esc(rp(r.out[r.out.length-1]))+'</code>':''));
+ $('nx').textContent=i==M.length-1?'Ver mi puntaje 🏆':'Siguiente misión →';$('nx').hidden=false;head()}
+function end(){sfx(1);confetti(260);const t=S.reduce((a,b)=>a+b,0),T=t>=M.length*2.85?'🏆 Mochila perfecta':t>=M.length*2.3?'🎒 Explorador/a de listas':t>=M.length*1.6?'📚 Aprendiz organizado/a':'🌱 Mochila en construcción';
+ const rev=M.filter((_,k)=>S[k]<3);$('bar').style.width='100%';
+ $('m').className='fin';
+ $('m').innerHTML=`<section class="card"><h2>${T}</h2><p class="big">⭐ ${t} / ${M.length*3}</p><p>${rev.length?'Para repasar: '+rev.map(x=>'<b>'+esc(x.k)+'</b>').join(', '):'¡Todas a la primera! 🙌'}</p><button id="again">↺ Jugar de nuevo</button></section>
+ <section class="card"><h2>📝 Mi chuleta de listas</h2><div class="cs">${M.map((x,k)=>`<div><span>${'⭐'.repeat(S[k])}</span> <b>${esc(x.k)}</b><pre>${esc(x.s.replace(/;\s*/g,'\n'))}</pre></div>`).join('')}</div></section>`}
+function again(){i=0;cur=[...START];S=[];$('m').className='';$('m').innerHTML=tpl;load()}
+document.addEventListener('click',e=>{const id=e.target.id;
+ if(id==='go')check();
+ else if(id==='mu'){snd=!snd;e.target.textContent=snd?'🔊':'🔇'}
+ else if(id==='hb'&&!done){hu=1;say('hint','💡 '+M[i].h)}
+ else if(id==='rs'&&!done){$('cd').value='';draw(cur);$('fb').innerHTML=''}
+ else if(id==='nx'){if(i==M.length-1){i++;end();$('tot').textContent='⭐ '+S.reduce((a,b)=>a+b,0)}else{i++;load()}}
+ else if(id==='again')again()});
+document.addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter'&&e.target.id==='cd')check()});
+load();
+</script>
+</body>
+</html>
